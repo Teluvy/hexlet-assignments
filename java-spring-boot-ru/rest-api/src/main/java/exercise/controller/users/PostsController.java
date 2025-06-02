@@ -1,5 +1,6 @@
 package exercise.controller.users;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,18 +22,22 @@ import exercise.Data;
 @RestController
 @RequestMapping("/api/users")
 public class PostsController {
+
+    private static final List<Post> posts = new ArrayList<>(Data.getPosts());
+
     @GetMapping("/{id}/posts")
-    public List<Post> index(@PathVariable int id){
-        List<Post> mbPosts = Data.getPosts().stream().filter(p -> p.getUserId() == id).toList();
-        return mbPosts;
+    public List<Post> index(@PathVariable int id) {
+        return posts.stream()
+                .filter(p -> p.getUserId() == id)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/posts")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Post> create(@PathVariable int id, @RequestBody Post post){
+    public Post create(@PathVariable int id, @RequestBody Post post) {
         post.setUserId(id);
-        Data.getPosts().add(post);
-        return ResponseEntity.status(HttpStatus.CREATED).body(post);
+        posts.add(post);
+        return post;
     }
 }
 // END
